@@ -190,6 +190,21 @@ def main(args):
         pred_html = pred_res["html"]
         logger.info(pred_html)
         to_excel(pred_html, excel_path)
+
+        # 表头进行优化
+        import pandas as pd  
+        excel_file = excel_path  
+        df = pd.read_excel(excel_file, engine='openpyxl')   
+        txt_file = '1.txt' 
+        with open(txt_file, 'w', encoding='utf-8') as f: 
+            header = ' '.join(df.columns)  
+            f.write(header + '\n')   
+            for index, row in df.iterrows():    
+                line = ' '.join(map(str, row.values))  
+                f.write(line + '\n')    
+        df = pd.read_csv(txt_file, sep=' ', header=None)   
+        df.to_excel(excel_file, index=False, header=False) 
+        
         logger.info("excel saved to {}".format(excel_path))
         elapse = time.time() - starttime
         logger.info("Predict time : {:.3f}s".format(elapse))
